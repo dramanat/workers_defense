@@ -11,46 +11,46 @@ describe "#format_name" do
 
 end
 
-describe "all_alpha_chars?" do
+describe "only_allowed_chars?" do
   let(:clean_up) { CleanUp.new }
 
   it "should return false when blank name" do
-    result = clean_up.all_alpha_chars?("")
+    result = clean_up.only_allowed_chars?("")
     expect(result).to eq false
   end
 
   it "should return false when numerics in name" do
-    result = clean_up.all_alpha_chars?("a3b")
+    result = clean_up.only_allowed_chars?("a3b")
     expect(result).to eq false
   end
 
-  it "should return false when space with alpha in name" do
-    result = clean_up.all_alpha_chars?("a b")
-    expect(result).to eq false
+  it "should return true when space with alpha in name" do
+    result = clean_up.only_allowed_chars?("a b")
+    expect(result).to eq true
   end
 
   it "should return false when * in name" do
-    result = clean_up.all_alpha_chars?("a*b")
+    result = clean_up.only_allowed_chars?("a*b")
     expect(result).to eq false
   end
 
-  it "should return false when - in name" do
-    result = clean_up.all_alpha_chars?("a-b")
-    expect(result).to eq false
+  it "should return true when - in name" do
+    result = clean_up.only_allowed_chars?("a-b")
+    expect(result).to eq true
   end
   
   it "should return true when name is camel case" do
-    result = clean_up.all_alpha_chars?("DeLeon")
+    result = clean_up.only_allowed_chars?("DeLeon")
     expect(result).to eq true
   end
 
   it "should return true when name is all lower case" do
-    result = clean_up.all_alpha_chars?("deleon")
+    result = clean_up.only_allowed_chars?("deleon")
     expect(result).to eq true
   end
 
   it "should return true when name is all upper case" do
-    result = clean_up.all_alpha_chars?("DELEON")
+    result = clean_up.only_allowed_chars?("DELEON")
     expect(result).to eq true
   end
 end
@@ -73,6 +73,15 @@ describe "all_caps?" do
     expect(result).to eq false
   end
 
+  it "should return false if hyphen exists" do
+    result = clean_up.all_caps?("DE-LEON")
+    expect(result).to eq false
+  end
+
+  it "should return false if space exists" do
+    result = clean_up.all_caps?("DE LEON")
+    expect(result).to eq false
+  end
 end
 
 describe "all_lower?" do
@@ -93,6 +102,15 @@ describe "all_lower?" do
     expect(result).to eq false
   end
 
+  it "should return false if hyphen exists" do
+    result = clean_up.all_lower?("de-leon")
+    expect(result).to eq false
+  end
+
+  it "should return false if space exists" do
+    result = clean_up.all_lower?("de leon")
+    expect(result).to eq false
+  end
 end
 
 describe "capital_lower_capital_rest_lower?" do
@@ -111,6 +129,16 @@ describe "capital_lower_capital_rest_lower?" do
   it "should return true if camel case" do
     result = clean_up.capital_lower_capital_rest_lower?("DeLeon")
     expect(result).to eq true
+  end
+
+  it "should return false if hyphen exists" do
+    result = clean_up.capital_lower_capital_rest_lower?("De-Leon")
+    expect(result).to eq false
+  end
+
+  it "should return false if space exists" do
+    result = clean_up.capital_lower_capital_rest_lower?("De Leon")
+    expect(result).to eq false
   end
 
 end
@@ -137,6 +165,17 @@ describe "start_with_capital_rest_lower?" do
     result = clean_up.start_with_capital_rest_lower?("Lisa")
     expect(result).to eq true
   end
+
+  it "should return false if hyphen exists" do
+    result = clean_up.start_with_capital_rest_lower?("De-Leon")
+    expect(result).to eq false
+  end
+
+  it "should return false if space exists" do
+    result = clean_up.start_with_capital_rest_lower?("De Leon")
+    expect(result).to eq false
+  end
+
 end
 
 

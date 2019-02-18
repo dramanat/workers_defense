@@ -32,10 +32,10 @@ class CleanUp
       next unless valid_zip?(zip, line_num, row)
       
       first_name = row[first_name_idx]
-      next unless all_alpha_chars?(first_name, line_num, row)
+      next unless only_allowed_chars?(first_name, line_num, row)
 
       last_name  = row[last_name_idx]
-      next unless all_alpha_chars?(last_name , line_num, row)
+      next unless only_allowed_chars?(last_name , line_num, row)
 
       if need_to_format_name?(first_name)
         first_name = format_name(first_name.downcase)
@@ -95,8 +95,8 @@ class CleanUp
     return true if all_caps?(name) || all_lower?(name)
   end
 
-  def all_alpha_chars?(name, line_num=0, row="")
-    if !!(/^[a-zA-Z]+$/ =~ name)
+  def only_allowed_chars?(name, line_num=0, row="")
+    if !!(/^[a-zA-Z\-\ ]+$/ =~ name)
       true
     else
       puts "ROW #{line_num} invalid first or last name: #{row}"
