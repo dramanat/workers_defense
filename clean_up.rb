@@ -17,6 +17,12 @@ end
 
 class CleanUp
 
+  def initialize
+    @num_invalid_zip        = 0
+    @num_invalid_first_name = 0
+    @num_invalid_last_name  = 0
+  end
+
   def do_it
     first_name_idx = 0
     last_name_idx  = 1
@@ -32,10 +38,10 @@ class CleanUp
       next unless valid_zip?(zip, line_num, row)
       
       first_name = row[first_name_idx]
-      next unless only_allowed_chars?(first_name, line_num, row)
+      next unless only_allowed_chars?(first_name, line_num, row, true, false)
 
       last_name  = row[last_name_idx]
-      next unless only_allowed_chars?(last_name , line_num, row)
+      next unless only_allowed_chars?(last_name , line_num, row, false, true)
 
       if need_to_format_name?(first_name)
         first_name = format_name(first_name.downcase)
@@ -61,6 +67,10 @@ class CleanUp
       end
       
     end
+
+    puts "Number of invalid zips       = #{@num_invalid_zip}"
+    puts "Number of invalid first name = #{@num_invalid_first_name}"
+    puts "Number of invalid last name  = #{@num_invalid_last_name}"
 
     create_new_csv(persons)
   end
@@ -95,11 +105,17 @@ class CleanUp
     return true if all_caps?(name) || all_lower?(name)
   end
 
-  def only_allowed_chars?(name, line_num=0, row="")
+  def only_allowed_chars?(name, line_num=0, row="", first, last)
     if !!(/^[\p{Alpha}\-\ ]+$/ =~ name)
       true
     else
-      puts "ROW #{line_num} invalid first or last name: #{row}"
+      if first
+        puts "ROW #{line_num} invalid first name: #{row}"
+        @num_invalid_first_name += 1 if first
+      elsif last
+        puts "ROW #{line_num} invalid last name: #{row}"
+        @num_invalid_last_name  += 1 if last
+      end
       false
     end
   end
@@ -124,6 +140,7 @@ class CleanUp
     if !!(/^[0-9]{5}$/ =~ zip)
       true
     else
+      @num_invalid_zip += 1
       puts "ROW #{line_num} invalid zip: #{row}"
       false
     end
