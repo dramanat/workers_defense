@@ -96,7 +96,7 @@ class CleanUp
   end
 
   def only_allowed_chars?(name, line_num=0, row="")
-    if !!(/^[a-zA-Z\-\ ]+$/ =~ name)
+    if !!(/^[\p{Alpha}\-\ ]+$/ =~ name)
       true
     else
       puts "ROW #{line_num} invalid first or last name: #{row}"
@@ -105,11 +105,11 @@ class CleanUp
   end
 
   def all_caps?(name)
-    !!(/^[A-Z]+$/ =~ name)
+    !!(/^[\p{Upper}]+$/ =~ name)
   end
 
   def all_lower?(name)
-    !!(/^[a-z]+$/ =~ name)
+    !!(/^[\p{Lower}]+$/ =~ name)
   end
 
   def start_with_capital_rest_lower?(name)
