@@ -21,6 +21,7 @@ class CleanUp
     @num_invalid_zip        = 0
     @num_invalid_first_name = 0
     @num_invalid_last_name  = 0
+    @diff_data              = Hash.new
   end
 
   def do_it
@@ -53,6 +54,12 @@ class CleanUp
 
       email = row[email_idx]
       if persons.has_key?(email)
+        if (persons[email].first_name != row[first_name_idx] ||
+            persons[email].last_name  != row[last_name_idx] ||
+            persons[email].zip        != row[zip_idx])
+          @diff_data[email] = "has diff data"
+        end
+
         persons[email].groups = append_to_groups(persons[email].groups, 
                                                  row[groups_idx])
       else
@@ -71,6 +78,7 @@ class CleanUp
     puts "Number of invalid zips       = #{@num_invalid_zip}"
     puts "Number of invalid first name = #{@num_invalid_first_name}"
     puts "Number of invalid last name  = #{@num_invalid_last_name}"
+    puts "Number with diff data        = #{@diff_data.length} ; #{@diff_data.keys}"
 
     create_new_csv(persons)
   end
